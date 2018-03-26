@@ -3,8 +3,8 @@
 package draw
 
 import (
-	"github.com/jkao1/yet-another-3d-thing/display"
-	"github.com/jkao1/yet-another-3d-thing/matrix"
+	"github.com/jkao1/polygons/display"
+	"github.com/jkao1/polygons/matrix"
 
 	"math"
 )
@@ -22,6 +22,8 @@ func DrawLines(edges [][]float64, screen [][][]int) {
 	}
 }
 
+// DrawPolygons draws a polygon matrix onto a screen.
+
 // AddPoint adds a point to an edge matrix.
 func AddPoint(m [][]float64, x, y, z float64) {
 	m[0] = append(m[0], x)
@@ -36,6 +38,18 @@ func AddEdge(m [][]float64, params ...float64) {
 	x1, y1, z1 := params[3], params[4], params[5]
 	AddPoint(m, x0, y0, z0)
 	AddPoint(m, x1, y1, z1)
+}
+
+// AddPolygon adds a polygon (three points) to an edge matrix.
+func AddPolygon(
+	m [][]float64,
+	x0, y0, z0,
+	x1, y1, z1,
+	x2, y2, z2 float64,
+) {
+	AddPoint(m, x0, y0, z0)
+	AddPoint(m, x1, y1, z1)
+	AddPoint(m, x2, y2, z2)
 }
 
 // AddCircle adds a circle of center (cx, cy, cz) and radius r to an edge

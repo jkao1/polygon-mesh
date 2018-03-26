@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/jkao1/yet-another-3d-thing/display"
-	"github.com/jkao1/yet-another-3d-thing/parser"
+	"github.com/jkao1/polygons/display"
+	"github.com/jkao1/polygons/parser"
 )
 
 func main() {

@@ -2,9 +2,9 @@
 package parser
 
 import (
-	"github.com/jkao1/yet-another-3d-thing/display"
-	"github.com/jkao1/yet-another-3d-thing/draw"
-	"github.com/jkao1/yet-another-3d-thing/matrix"
+	"github.com/jkao1/polygons/display"
+	"github.com/jkao1/polygons/draw"
+	"github.com/jkao1/polygons/matrix"
 
 	"bufio"
 	"os"
