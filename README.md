@@ -8,6 +8,8 @@
 If a surface is in our view, **N** · **V** >= 0.  
 
 If P0, P1, P2 are the three points of a triangle in counterclockwise order,  
-**A** = <P1 - P0>  
-**B** = <P2 - P0>  
-**N** = **A** x **B**
+**A** = `<P1 - P0>`  
+**B** = `<P2 - P0>`  
+**N** = **A** x **B**  
+
+For now, we only care about the sign of **N**<sub>z</sub> since **V** is simply `<0, 0, 1>`.
