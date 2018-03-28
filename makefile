@@ -1,2 +1,2 @@
 all:
-	go run main.go
+	go run main.go display.go draw.go matrix.go parser.go

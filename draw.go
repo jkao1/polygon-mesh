@@ -1,11 +1,8 @@
-// Package draw contains useful functions to manipulate the edge matrix and draw
+// draw contains useful functions to manipulate the edge matrix and draw
 // it onto a screen.
-package draw
+package main
 
 import (
-	"github.com/jkao1/polygons/display"
-	"github.com/jkao1/polygons/matrix"
-
 	"math"
 )
 
@@ -14,8 +11,8 @@ var DefaultDrawColor []int = []int{0, 0, 0}
 // DrawLines draws an edge matrix onto a screen.
 func DrawLines(edges [][]float64, screen [][][]int) {
 	for i := 0; i < len(edges[0])-1; i += 2 {
-		point := matrix.ExtractColumn(edges, i)
-		nextPoint := matrix.ExtractColumn(edges, i+1)
+		point := ExtractColumn(edges, i)
+		nextPoint := ExtractColumn(edges, i+1)
 		x0, y0 := point[0], point[1]
 		x1, y1 := nextPoint[0], nextPoint[1]
 		DrawLine(screen, x0, y0, x1, y1)
@@ -23,6 +20,19 @@ func DrawLines(edges [][]float64, screen [][][]int) {
 }
 
 // DrawPolygons draws a polygon matrix onto a screen.
+func DrawPolygons(polygons [][]float64, screen [][][]int) {
+	for i := 0; i < len(polygons[0])-2; i += 3 {
+		point0 := ExtractColumn(polygons, i)
+		point1 := ExtractColumn(polygons, i+1)
+		point2 := ExtractColumn(polygons, i+2)
+		x0, y0 := point0[0], point0[1]
+		x1, y1 := point1[0], point1[1]
+		x2, y2 := point2[0], point2[1]
+		DrawLine(screen, x0, y0, x1, y1)
+		DrawLine(screen, x1, y1, x2, y2)
+		DrawLine(screen, x2, y2, x0, y0)
+	}
+}
 
 // AddPoint adds a point to an edge matrix.
 func AddPoint(m [][]float64, x, y, z float64) {
@@ -81,15 +91,15 @@ func generateCurveCoefs(p0, p1, p2, p3 float64, curveType string) [][]float64 {
 	m := make([][]float64, 4)
 	var coefGenerator [][]float64
 	if curveType == "hermite" {
-		coefGenerator = matrix.MakeHermite()
+		coefGenerator = MakeHermite()
 	} else if curveType == "bezier" {
-		coefGenerator = matrix.MakeBezier()
+		coefGenerator = MakeBezier()
 	}
 	m[0] = []float64{p0}
 	m[1] = []float64{p1}
 	m[2] = []float64{p2}
 	m[3] = []float64{p3}
-	matrix.MultiplyMatrices(&coefGenerator, &m)
+	MultiplyMatrices(&coefGenerator, &m)
 	return m
 }
 
@@ -97,21 +107,34 @@ func generateCurveCoefs(p0, p1, p2, p3 float64, curveType string) [][]float64 {
 // (x, y, z) with width, height and depth dimensions.
 func AddBox(m [][]float64, a ...float64) {
 	x, y, z, width, height, depth := a[0], a[1], a[2], a[3], a[4], a[5]
-	AddEdge(m, x, y, z, x+width, y, z)
-	AddEdge(m, x, y, z, x, y-height, z)
-	AddEdge(m, x, y, z, x, y, z-depth)
+	x0, x1 := x, x + width
+	y0, y1 := y, y - height
+	z0, z1 := z, z - depth
 
-	AddEdge(m, x, y-height, z, x, y-height, z-depth)
-	AddEdge(m, x, y-height, z, x+width, y-height, z)
-	AddEdge(m, x, y-height, z-depth, x+width, y-height, z-depth)
-	AddEdge(m, x+width, y-height, z, x+width, y-height, z-depth)
+	// Add front
+	AddPolygon(m, x0, y0, z0, x1, y0, z0, x1, y1, z0)
+	AddPolygon(m, x1, y1, z0, x0, y1, z0, x0, y0, z0)
 
-	AddEdge(m, x, y, z-depth, x+width, y, z-depth)
-	AddEdge(m, x, y, z-depth, x, y-height, z-depth)
+  // Add back
+	AddPolygon(m, x0, y0, z1, x1, y0, z1, x1, y1, z1)
+	AddPolygon(m, x1, y1, z1, x0, y1, z1, x0, y0, z1)
 
-	AddEdge(m, x+width, y, z, x+width, y-height, z)
-	AddEdge(m, x+width, y, z, x+width, y, z-depth)
-	AddEdge(m, x+width, y, z-depth, x+width, y-height, z-depth)
+  // Add left side
+	AddPolygon(m, x0, y0, z1, x0, y0, z0, x0, y1, z1)
+	AddPolygon(m, x0, y1, z1, x0, y1, z0, x0, y0, z0)
+
+	// Add right side
+	AddPolygon(m, x1, y0, z1, x1, y1, z1, x1, y1, z0)
+	AddPolygon(m, x1, y0, z1, x1, y0, z0, x1, y1, z0)
+
+	// Add top
+	AddPolygon(m, x0, y0, z1, x0, y0, z0, x1, y0, z0)
+	AddPolygon(m, x1, y0, z0, x1, y0, z0, x0, y0, z1)
+
+	// Add bottom
+	AddPolygon(m, x1, y1, z1, x0, y1, z0, x0, y1, z1)
+	AddPolygon(m, x1, y1, z1, x0, y1, z0, x1, y1, z0)
+
 }
 
 // AddSphere adds all the points for a sphere with center (cx, cy, cz) and
@@ -269,8 +292,8 @@ func SetColor(color string) {
 
 // plot draws a point (x, y) onto a screen with the default draw color.
 func plot(screen [][][]int, x, y float64) {
-	newX, newY := float64ToInt(x), display.YRES-float64ToInt(y)-1
-	if newX >= 0 && newX < display.XRES && newY >= 0 && newY < display.YRES {
+	newX, newY := float64ToInt(x), YRES-float64ToInt(y)-1
+	if newX >= 0 && newX < XRES && newY >= 0 && newY < YRES {
 		screen[newY][newX] = DefaultDrawColor[:]
 	}
 }

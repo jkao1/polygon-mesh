@@ -1,5 +1,5 @@
-// Package display contains useful functions for the screen
-package display
+// display contains useful functions for the screen
+package main
 
 import (
 	"bytes"
@@ -21,7 +21,7 @@ func NewScreen() (screen [][][]int) {
 		screen[i] = make([][]int, XRES)
 
 		for j, _ := range screen[i] {
-			screen[i][j] = []int{0, 0, 0}
+			screen[i][j] = []int{255, 255, 255}
 		}
 	}
 
@@ -43,7 +43,7 @@ func ClearScreen(screen [][][]int) {
 		screen[i] = make([][]int, XRES)
 
 		for j, _ := range screen[i] {
-			screen[i][j] = []int{0, 0, 0}
+			screen[i][j] = []int{255, 255, 255}
 		}
 	}
 }

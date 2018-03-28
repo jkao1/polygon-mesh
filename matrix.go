@@ -1,5 +1,5 @@
-// Package matrix provides functions for creating and manipulating matrices.
-package matrix
+// matrix provides functions for creating and manipulating matrices.
+package main
 
 import (
 	"fmt"
