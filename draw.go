@@ -112,28 +112,28 @@ func AddBox(m [][]float64, a ...float64) {
 	z0, z1 := z, z - depth
 
 	// Add front
-	AddPolygon(m, x0, y0, z0, x1, y0, z0, x1, y1, z0)
-	AddPolygon(m, x1, y1, z0, x0, y1, z0, x0, y0, z0)
+	AddPolygon(m, x1, y1, z0, x1, y0, z0, x0, y0, z0)
+	AddPolygon(m, x1, y1, z0, x0, y0, z0, x0, y1, z0)
 
   // Add back
 	AddPolygon(m, x0, y0, z1, x1, y0, z1, x1, y1, z1)
 	AddPolygon(m, x1, y1, z1, x0, y1, z1, x0, y0, z1)
 
   // Add left side
-	AddPolygon(m, x0, y0, z1, x0, y0, z0, x0, y1, z1)
+	AddPolygon(m, x0, y0, z1, x0, y1, z1, x0, y0, z0)
 	AddPolygon(m, x0, y1, z1, x0, y1, z0, x0, y0, z0)
 
 	// Add right side
-	AddPolygon(m, x1, y0, z1, x1, y1, z1, x1, y1, z0)
+	AddPolygon(m, x1, y0, z1, x1, y1, z0, x1, y1, z1)
 	AddPolygon(m, x1, y0, z1, x1, y0, z0, x1, y1, z0)
 
 	// Add top
 	AddPolygon(m, x0, y0, z1, x0, y0, z0, x1, y0, z0)
-	AddPolygon(m, x1, y0, z0, x1, y0, z0, x0, y0, z1)
+	AddPolygon(m, x1, y0, z0, x1, y0, z1, x0, y0, z1)
 
 	// Add bottom
 	AddPolygon(m, x1, y1, z1, x0, y1, z0, x0, y1, z1)
-	AddPolygon(m, x1, y1, z1, x0, y1, z0, x1, y1, z0)
+	AddPolygon(m, x1, y1, z1, x1, y1, z0, x0, y1, z0)
 
 }
 
