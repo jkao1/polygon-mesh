@@ -63,7 +63,7 @@ func MultiplyMatrices(m1Ptr, m2Ptr *[][]float64) {
 	for i, row := range m1 {
 		for j := 0; j < len(m2[0]); j++ {
 			col := ExtractColumn(m2, j)
-			product[i][j] = dot(row, col)
+			product[i][j] = vectorDot(row, col)
 		}
 	}
 
@@ -80,15 +80,6 @@ func ExtractColumn(matrix [][]float64, colIndex int) []float64 {
 	}
 
 	return col
-}
-
-// dot receives two slices as vectors. It returns their dot product.
-func dot(x, y []float64) float64 {
-	output := 0.0
-	for i, _ := range x {
-		output += x[i] * y[i]
-	}
-	return output
 }
 
 // NewMatrix creates a new float64 matrix. The default row and column size is 4.

@@ -21,13 +21,24 @@ func DrawLines(edges [][]float64, screen [][][]int) {
 
 // DrawPolygons draws a polygon matrix onto a screen.
 func DrawPolygons(polygons [][]float64, screen [][][]int) {
+	viewVector := []float64{0, 0, 1}
 	for i := 0; i < len(polygons[0])-2; i += 3 {
 		point0 := ExtractColumn(polygons, i)
 		point1 := ExtractColumn(polygons, i+1)
 		point2 := ExtractColumn(polygons, i+2)
+
+		A := vectorSubtract(point1, point0)
+		B := vectorSubtract(point2, point0)
+		N := vectorCross(A, B)
+
+		if vectorDot(N, viewVector) < 0 {
+			continue
+		}
+
 		x0, y0 := point0[0], point0[1]
 		x1, y1 := point1[0], point1[1]
 		x2, y2 := point2[0], point2[1]
+
 		DrawLine(screen, x0, y0, x1, y1)
 		DrawLine(screen, x1, y1, x2, y2)
 		DrawLine(screen, x2, y2, x0, y0)
