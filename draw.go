@@ -148,20 +148,43 @@ func AddBox(m [][]float64, a ...float64) {
 // AddSphere adds all the points for a sphere with center (cx, cy, cz) and
 // radius r.
 func AddSphere(m [][]float64, a ...float64) {
-	cx, cy, cz, r := a[0], a[1], a[2], a[3]
-	for _, p := range GenerateSphere(cx, cy, cz, r) {
-		AddEdge(m, p[0], p[1], p[2], p[0]+1, p[1]+1, p[2]+1)
+	step := 50
+	points := GenerateSphere(a[0], a[1], a[2], a[3], step)
+	latStop, lngStop := step, step
+
+	step++
+
+	for lat := 0; lat < latStop; lat++ {
+		for lng := 0; lng <= lngStop; lng++ {
+			i := lat * step + lng
+			p1 := points[i]
+			p2 := points[(i + 1) % len(points)]
+			p3 := points[(i + step) % len(points)]
+			p4 := points[(i + step + 1) % len(points)]
+			AddPolygon(
+				m,
+				p1[0], p1[1], p1[2],
+				p2[0], p2[1], p2[2],
+				p3[0], p3[1], p3[2],
+			)
+			AddPolygon(
+				m,
+				p2[0], p2[1], p2[2],
+				p4[0], p4[1], p4[2],
+				p3[0], p3[1], p3[2],
+			)
+		}
 	}
 }
 
 // GenerateSphere generates all the points along the surface of a sphere with
 // center (cx, cy, cz) and radius r. It returns a matrix of the points.
-func GenerateSphere(cx, cy, cz, r float64) [][]float64 {
+func GenerateSphere(cx, cy, cz, r float64, step int) [][]float64 {
 	points := make([][]float64, 0)
-	for i := 0.0; i <= 1.0; i += 0.01 {
-		fi := 2 * math.Pi * i
-		for j := 0.0; j <= 0.5; j += 0.01 {
-			theta := 2 * math.Pi * j
+	for i := 0; i < step; i++ {
+		fi := 2 * math.Pi * float64(i) / float64(step)
+		for j := 0; j <= step; j++ {
+			theta := math.Pi * float64(j) / float64(step)
 			x := r*math.Cos(theta) + cx
 			y := r*math.Sin(theta)*math.Cos(fi) + cy
 			z := r*math.Sin(theta)*math.Sin(fi) + cz
